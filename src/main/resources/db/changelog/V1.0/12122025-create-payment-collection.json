@@ -1,0 +1,39 @@
+{
+  "databaseChangeLog": [
+    {
+      "changeSet": {
+        "id": "20251212-1",
+        "author": "payment-service",
+        "changes": [
+          {
+            "createCollection": {
+              "collectionName": "payments"
+            }
+          },
+          {
+            "createIndex": {
+              "collectionName": "payments",
+              "keys": {
+                "order_id": 1
+              },
+              "options": {
+                "name": "idx_payments_order_id"
+              }
+            }
+          },
+          {
+            "createIndex": {
+              "collectionName": "payments",
+              "keys": {
+                "user_id": 1
+              },
+              "options": {
+                "name": "idx_payments_user_id"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

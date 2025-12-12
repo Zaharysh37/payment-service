@@ -1,0 +1,9 @@
+{
+  "databaseChangeLog": [
+    {
+      "include": {
+        "file": "db/changelog/V1.0/12122025-create-payment-collection.json"
+      }
+    }
+  ]
+}
