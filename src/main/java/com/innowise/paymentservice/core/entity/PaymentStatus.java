@@ -2,7 +2,6 @@ package com.innowise.paymentservice.core.entity;
 
 public enum PaymentStatus {
     PENDING,
-    PAID,
-    FAIL,
-    REFUNDED
+    SUCCESS,
+    FAILED
 }

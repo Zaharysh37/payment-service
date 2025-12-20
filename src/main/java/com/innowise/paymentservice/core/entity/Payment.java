@@ -16,23 +16,24 @@ import org.springframework.data.mongodb.core.mapping.FieldType;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "payment")
+@Document(collection = "payments")
 public class Payment {
 
     @Id
     private String id;
 
     @Field("user_id")
-    private String userId;
+    private Long userId;
 
     @Field("order_id")
-    private String orderId;
+    private Long orderId;
 
     private PaymentStatus status;
 
     @CreatedDate
-    private LocalDateTime paymentDate;
+    @Field("creation_date")
+    private LocalDateTime creationDate;
 
-    @Field(targetType = FieldType.DECIMAL128, name = "payment_amount")
-    private BigDecimal paymentAmount;
+    @Field(targetType = FieldType.DECIMAL128)
+    private BigDecimal amount;
 }
