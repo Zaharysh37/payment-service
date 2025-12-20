@@ -23,5 +23,5 @@ public interface BaseMapper<E, D> {
 
     List<E> toEntities(Iterable<D> dtos);
 
-    E merge(@MappingTarget D dto, E entity);
+    E merge(@MappingTarget E entity, D dto);
 }
