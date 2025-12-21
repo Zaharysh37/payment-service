@@ -36,7 +36,10 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment payment = createPaymentMapper.toEntity(createPaymentDto);
 
-        if (randomNumberClient.getRandomNumber() % 2 == 0) {
+        Integer externalApiResponse = randomNumberClient.getRandomNumber();
+        if (externalApiResponse == 0) {
+            payment.setStatus(PaymentStatus.PENDING);
+        } else if (externalApiResponse % 2 == 0) {
             payment.setStatus(PaymentStatus.SUCCESS);
         } else {
             payment.setStatus(PaymentStatus.FAILED);
@@ -94,8 +97,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    @Transactional()
-    public void deletePayment(Long id) {
-
+    @Transactional
+    public void deletePayment(String id) {
+        paymentRepository.deleteById(id);
     }
 }

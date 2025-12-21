@@ -2,7 +2,6 @@ package com.innowise.paymentservice.core.service;
 
 import com.innowise.paymentservice.api.dto.CreatePaymentDto;
 import com.innowise.paymentservice.api.dto.GetPaymentDto;
-import com.innowise.paymentservice.api.dto.GetPaymentTotalResultDto;
 import com.innowise.paymentservice.core.entity.PaymentStatus;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,5 +25,5 @@ public interface PaymentService {
 
     BigDecimal getPaymentTotalResult(LocalDateTime from, LocalDateTime to);
 
-    void deletePayment(Long id);
+    void deletePayment(String id);
 }

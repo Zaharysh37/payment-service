@@ -13,12 +13,13 @@ public class RandomNumberClient {
     private final RestClient restClient = RestClient.create();
 
     private static final String EXTERNAL_API_URL =
-        "http://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new";
+        "https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new";
 
     public Integer getRandomNumber() {
         try {
             String response = restClient.get()
                 .uri(EXTERNAL_API_URL)
+                .header("User-Agent", "PaymentService/1.0")
                 .retrieve()
                 .body(String.class);
 
@@ -29,6 +30,6 @@ public class RandomNumberClient {
             log.error("External API failed, using fallback random: {}", e.getMessage());
         }
 
-        return 1;
+        return 0;
     }
 }
