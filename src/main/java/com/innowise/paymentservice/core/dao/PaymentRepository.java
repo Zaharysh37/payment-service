@@ -19,8 +19,8 @@ public interface PaymentRepository extends MongoRepository<Payment, String> {
     Page<Payment> findAllByStatusIn(Collection<PaymentStatus> statuses, Pageable pageable);
 
     @Aggregation(pipeline = {
-        "{ $match: { timestamp:  { $gte: ?0, $lte: ?1 } } }",
-        "{ $group: { _id: null, total: { $sum: 'amount' } } }"
+        "{ $match: { creation_date:  { $gte: ?0, $lte: ?1 } } }",
+        "{ $group: { _id: null, total: { $sum: '$amount' } } }"
     })
     GetPaymentTotalResultDto sumPaymentInPeriod(LocalDateTime from, LocalDateTime to);
 }
