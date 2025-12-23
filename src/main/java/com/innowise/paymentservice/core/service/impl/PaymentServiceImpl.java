@@ -4,12 +4,15 @@ import com.innowise.paymentservice.api.client.RandomNumberClient;
 import com.innowise.paymentservice.api.dto.CreatePaymentDto;
 import com.innowise.paymentservice.api.dto.GetPaymentDto;
 import com.innowise.paymentservice.api.dto.GetPaymentTotalResultDto;
+import com.innowise.paymentservice.api.dto.eventdto.PaymentEventDto;
 import com.innowise.paymentservice.core.dao.PaymentRepository;
 import com.innowise.paymentservice.core.entity.Payment;
 import com.innowise.paymentservice.core.entity.PaymentStatus;
+import com.innowise.paymentservice.core.mapper.eventmapper.GetPaymentEventMapper;
 import com.innowise.paymentservice.core.mapper.paymentmapper.CreatePaymentMapper;
 import com.innowise.paymentservice.core.mapper.paymentmapper.GetPaymentMapper;
 import com.innowise.paymentservice.core.service.PaymentService;
+import com.innowise.paymentservice.core.service.eventservice.PaymentProducer;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -26,9 +29,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentServiceImpl implements PaymentService {
 
     private final RandomNumberClient randomNumberClient;
+
     private final PaymentRepository paymentRepository;
+
     private final GetPaymentMapper getPaymentMapper;
+
     private final CreatePaymentMapper createPaymentMapper;
+
+    private final GetPaymentEventMapper getPaymentEventMapper;
+
+    private final PaymentProducer paymentProducer;
 
     @Override
     @Transactional
@@ -46,6 +56,9 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         Payment savedPayment = paymentRepository.save(payment);
+
+        PaymentEventDto paymentEventDto = getPaymentEventMapper.toDto(payment);
+        paymentProducer.sendPaymentCreatedEvent(paymentEventDto);
 
         return getPaymentMapper.toDto(savedPayment);
     }
