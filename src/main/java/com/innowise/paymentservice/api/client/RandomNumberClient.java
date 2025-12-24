@@ -2,6 +2,7 @@ package com.innowise.paymentservice.api.client;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
@@ -12,13 +13,13 @@ public class RandomNumberClient {
 
     private final RestClient restClient = RestClient.create();
 
-    private static final String EXTERNAL_API_URL =
-        "https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new";
+    @Value("${random.api.url}")
+    private String externalApiUrl;
 
     public Integer getRandomNumber() {
         try {
             String response = restClient.get()
-                .uri(EXTERNAL_API_URL)
+                .uri(externalApiUrl)
                 .header("User-Agent", "PaymentService/1.0")
                 .retrieve()
                 .body(String.class);
