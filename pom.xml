@@ -31,7 +31,6 @@
 
         <sonar.coverage.exclusions>
             **/com/innowise/paymentservice/PaymentserviceApplication.java,
-            **/com/innowise/paymentservice/core/service/eventservice/**,
             **/com/innowise/paymentservice/core/entity/**,
             **/com/innowise/paymentservice/core/dao/**,
             **/com/innowise/paymentservice/core/config/**,
@@ -146,6 +145,23 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>kafka</artifactId>
             <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.15.10</version> <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>1.15.10</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
