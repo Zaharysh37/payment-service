@@ -30,7 +30,15 @@
         </sonar.coverage.jacoco.xmlReportPaths>
 
         <sonar.coverage.exclusions>
-            **/com/innowise/paymentservice/UserServiceApplication.java
+            **/com/innowise/paymentservice/PaymentserviceApplication.java,
+            **/com/innowise/paymentservice/core/service/eventservice/**,
+            **/com/innowise/paymentservice/core/entity/**,
+            **/com/innowise/paymentservice/core/dao/**,
+            **/com/innowise/paymentservice/core/config/**,
+            **/com/innowise/paymentservice/core/mapper/**,
+            **/com/innowise/paymentservice/api/dto/**,
+            **/com/innowise/paymentservice/api/controller/**,
+            **/com/innowise/paymentservice/api/client/**
         </sonar.coverage.exclusions>
 
         <sonar.tests>src/test/java</sonar.tests>
@@ -72,7 +80,7 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
-        <!-- 3. LIQUIBASE (Ядро + Mongo Extension) -->
+        <!-- 3. LIQUIBASE (+ Mongo Extension) -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
@@ -106,6 +114,40 @@
             <version>1.5.5.Final</version>
         </dependency>
 
+        <!-- 6. TESTS -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-contract-stub-runner</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>kafka</artifactId>
+            <version>${testcontainers.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -141,7 +183,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <!-- Jacoco -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
