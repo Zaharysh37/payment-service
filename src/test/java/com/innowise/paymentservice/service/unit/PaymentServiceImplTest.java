@@ -17,8 +17,11 @@ import com.innowise.paymentservice.core.dao.PaymentRepository;
 import com.innowise.paymentservice.core.entity.Payment;
 import com.innowise.paymentservice.core.entity.PaymentStatus;
 import com.innowise.paymentservice.core.mapper.eventmapper.GetPaymentEventMapper;
+import com.innowise.paymentservice.core.mapper.eventmapper.GetPaymentEventMapperImpl;
 import com.innowise.paymentservice.core.mapper.paymentmapper.CreatePaymentMapper;
+import com.innowise.paymentservice.core.mapper.paymentmapper.CreatePaymentMapperImpl;
 import com.innowise.paymentservice.core.mapper.paymentmapper.GetPaymentMapper;
+import com.innowise.paymentservice.core.mapper.paymentmapper.GetPaymentMapperImpl;
 import com.innowise.paymentservice.core.service.eventservice.PaymentProducer;
 import com.innowise.paymentservice.core.service.impl.PaymentServiceImpl;
 import java.math.BigDecimal;
@@ -47,13 +50,13 @@ class PaymentServiceImplTest {
     private PaymentRepository paymentRepository;
 
     @Spy
-    private GetPaymentMapper getPaymentMapper;
+    private GetPaymentMapper getPaymentMapper = new GetPaymentMapperImpl();
 
     @Spy
-    private CreatePaymentMapper createPaymentMapper;
+    private CreatePaymentMapper createPaymentMapper = new CreatePaymentMapperImpl();
 
     @Spy
-    private GetPaymentEventMapper getPaymentEventMapper;
+    private GetPaymentEventMapper getPaymentEventMapper = new GetPaymentEventMapperImpl();
 
     @Mock
     private PaymentProducer paymentProducer;
@@ -206,12 +209,18 @@ class PaymentServiceImplTest {
             LocalDateTime.now(), new BigDecimal(1000)
         );
 
+        GetPaymentDto getPaymentDto = new GetPaymentDto(
+            payment.getId(),
+            payment.getOrderId(), payment.getUserId(), payment.getStatus(),
+            payment.getCreationDate(), payment.getAmount()
+        );
+
         when(paymentRepository.findById(paymentId)).thenReturn(
             Optional.of(payment));
 
         GetPaymentDto result = paymentService.getPaymentById(paymentId);
 
-        assertThat(result).isEqualTo(payment);
+        assertThat(result).isEqualTo(getPaymentDto);
         verify(getPaymentMapper, times(1)).toDto(payment);
     }
 
@@ -249,11 +258,20 @@ class PaymentServiceImplTest {
 
         Page<Payment> paymentsPage = new PageImpl<>(payments, pageable, payments.size());
 
+        List<GetPaymentDto> getPaymentDtoList = List.of(
+            new GetPaymentDto(
+                payments.get(0).getId(),
+                payments.get(0).getOrderId(), payments.get(0).getUserId(), payments.get(0).getStatus(),
+                payments.get(0).getCreationDate(), payments.get(0).getAmount())
+        );
+
+        Page<GetPaymentDto> getPaymentDtosPage = new PageImpl<>(getPaymentDtoList, pageable, getPaymentDtoList.size());
+
         when(paymentRepository.findAll(pageable)).thenReturn(paymentsPage);
 
         Page<GetPaymentDto> result = paymentService.getAllPayments(pageable);
 
-        assertThat(result).isEqualTo(paymentsPage);
+        assertThat(result).isEqualTo(getPaymentDtosPage);
 
         verify(getPaymentMapper, times(payments.size())).toDto(any(Payment.class));
     }
@@ -274,11 +292,20 @@ class PaymentServiceImplTest {
 
         Page<Payment> paymentsPage = new PageImpl<>(payments, pageable, payments.size());
 
+        List<GetPaymentDto> getPaymentDtoList = List.of(
+            new GetPaymentDto(
+                payments.get(0).getId(),
+                payments.get(0).getOrderId(), payments.get(0).getUserId(), payments.get(0).getStatus(),
+                payments.get(0).getCreationDate(), payments.get(0).getAmount())
+        );
+
+        Page<GetPaymentDto> getPaymentDtosPage = new PageImpl<>(getPaymentDtoList, pageable, getPaymentDtoList.size());
+
         when(paymentRepository.findByUserId(userId, pageable)).thenReturn(paymentsPage);
 
-        Page<GetPaymentDto> result = paymentService.getAllPayments(pageable);
+        Page<GetPaymentDto> result = paymentService.getPaymentsByUserId(userId, pageable);
 
-        assertThat(result).isEqualTo(paymentsPage);
+        assertThat(result).isEqualTo(getPaymentDtosPage);
 
         verify(getPaymentMapper, times(payments.size())).toDto(any(Payment.class));
     }
@@ -299,11 +326,20 @@ class PaymentServiceImplTest {
 
         Page<Payment> paymentsPage = new PageImpl<>(payments, pageable, payments.size());
 
+        List<GetPaymentDto> getPaymentDtoList = List.of(
+            new GetPaymentDto(
+                payments.get(0).getId(),
+                payments.get(0).getOrderId(), payments.get(0).getUserId(), payments.get(0).getStatus(),
+                payments.get(0).getCreationDate(), payments.get(0).getAmount())
+        );
+
+        Page<GetPaymentDto> getPaymentDtosPage = new PageImpl<>(getPaymentDtoList, pageable, getPaymentDtoList.size());
+
         when(paymentRepository.findByOrderId(orderId, pageable)).thenReturn(paymentsPage);
 
-        Page<GetPaymentDto> result = paymentService.getAllPayments(pageable);
+        Page<GetPaymentDto> result = paymentService.getPaymentsByOrderId(orderId, pageable);
 
-        assertThat(result).isEqualTo(paymentsPage);
+        assertThat(result).isEqualTo(getPaymentDtosPage);
 
         verify(getPaymentMapper, times(payments.size())).toDto(any(Payment.class));
     }
@@ -324,11 +360,20 @@ class PaymentServiceImplTest {
 
         Page<Payment> paymentsPage = new PageImpl<>(payments, pageable, payments.size());
 
+        List<GetPaymentDto> getPaymentDtoList = List.of(
+            new GetPaymentDto(
+                payments.get(0).getId(),
+                payments.get(0).getOrderId(), payments.get(0).getUserId(), payments.get(0).getStatus(),
+                payments.get(0).getCreationDate(), payments.get(0).getAmount())
+        );
+
+        Page<GetPaymentDto> getPaymentDtosPage = new PageImpl<>(getPaymentDtoList, pageable, getPaymentDtoList.size());
+
         when(paymentRepository.findAllByStatusIn(statuses, pageable)).thenReturn(paymentsPage);
 
-        Page<GetPaymentDto> result = paymentService.getAllPayments(pageable);
+        Page<GetPaymentDto> result = paymentService.getPaymentsByStatus(statuses, pageable);
 
-        assertThat(result).isEqualTo(paymentsPage);
+        assertThat(result).isEqualTo(getPaymentDtosPage);
 
         verify(getPaymentMapper, times(payments.size())).toDto(any(Payment.class));
     }
