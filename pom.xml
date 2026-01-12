@@ -35,9 +35,10 @@
             **/com/innowise/paymentservice/core/dao/**,
             **/com/innowise/paymentservice/core/config/**,
             **/com/innowise/paymentservice/core/mapper/**,
+            **/com/innowise/paymentservice/core/security/**,
             **/com/innowise/paymentservice/api/dto/**,
             **/com/innowise/paymentservice/api/controller/**,
-            **/com/innowise/paymentservice/api/client/**
+            **/com/innowise/paymentservice/api/client/**,
         </sonar.coverage.exclusions>
 
         <sonar.tests>src/test/java</sonar.tests>
@@ -89,6 +90,16 @@
             <groupId>org.liquibase.ext</groupId>
             <artifactId>liquibase-mongodb</artifactId>
             <version>${liquibase.version}</version>
+        </dependency>
+
+        <!-- 3. SECURITY -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
         <!-- 4. KAFKA -->
