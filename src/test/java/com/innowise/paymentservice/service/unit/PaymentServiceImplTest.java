@@ -22,6 +22,7 @@ import com.innowise.paymentservice.core.mapper.paymentmapper.CreatePaymentMapper
 import com.innowise.paymentservice.core.mapper.paymentmapper.CreatePaymentMapperImpl;
 import com.innowise.paymentservice.core.mapper.paymentmapper.GetPaymentMapper;
 import com.innowise.paymentservice.core.mapper.paymentmapper.GetPaymentMapperImpl;
+import com.innowise.paymentservice.core.security.SecurityHelper;
 import com.innowise.paymentservice.core.service.eventservice.PaymentProducer;
 import com.innowise.paymentservice.core.service.impl.PaymentServiceImpl;
 import java.math.BigDecimal;
@@ -39,6 +40,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentServiceImplTest {
@@ -60,6 +62,9 @@ class PaymentServiceImplTest {
 
     @Mock
     private PaymentProducer paymentProducer;
+
+    @Mock
+    private SecurityHelper securityHelper;
 
     @InjectMocks
     private PaymentServiceImpl paymentService;
@@ -199,7 +204,7 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void test_getPaymentById_returnPaymentById () {
+    void test_getPaymentById_returnPaymentById_ResourceBelongTo () {
 
         String paymentId = "694a6081723088150e7cf74c";
 
@@ -215,6 +220,9 @@ class PaymentServiceImplTest {
             payment.getCreationDate(), payment.getAmount()
         );
 
+        when(securityHelper.GetCurrentUserId()).thenReturn(payment.getUserId());
+        when(securityHelper.isAdmin()).thenReturn(false);
+
         when(paymentRepository.findById(paymentId)).thenReturn(
             Optional.of(payment));
 
@@ -222,6 +230,36 @@ class PaymentServiceImplTest {
 
         assertThat(result).isEqualTo(getPaymentDto);
         verify(getPaymentMapper, times(1)).toDto(payment);
+    }
+
+    @Test
+    void test_getPaymentById_ResourceDontBelongTo () {
+
+        String paymentId = "694a6081723088150e7cf74c";
+
+        Payment payment = new Payment(
+            paymentId,
+            1L, 1L, PaymentStatus.PENDING,
+            LocalDateTime.now(), new BigDecimal(1000)
+        );
+
+        Long userIdFromToken = 2L;
+
+        GetPaymentDto getPaymentDto = new GetPaymentDto(
+            payment.getId(),
+            payment.getOrderId(), payment.getUserId(), payment.getStatus(),
+            payment.getCreationDate(), payment.getAmount()
+        );
+
+        when(securityHelper.GetCurrentUserId()).thenReturn(userIdFromToken);
+        when(securityHelper.isAdmin()).thenReturn(false);
+
+        when(paymentRepository.findById(paymentId)).thenReturn(
+            Optional.of(payment));
+
+        assertThatThrownBy(() -> paymentService.getPaymentById(paymentId))
+            .isInstanceOf(AccessDeniedException.class)
+            .hasMessage("You define access to this resource");
     }
 
     @Test
@@ -277,9 +315,12 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void test_getPaymentsByUserId_returnPaymentsByUserId () {
+    void test_getPaymentsByUserId_returnPaymentsByUserId_ResourceBelongTo () {
 
         Long userId = 1L;
+
+        when(securityHelper.GetCurrentUserId()).thenReturn(userId);
+        when(securityHelper.isAdmin()).thenReturn(false);
 
         Pageable pageable = PageRequest.of(0, 10);
 
@@ -308,6 +349,20 @@ class PaymentServiceImplTest {
         assertThat(result).isEqualTo(getPaymentDtosPage);
 
         verify(getPaymentMapper, times(payments.size())).toDto(any(Payment.class));
+    }
+
+    @Test
+    void test_getPaymentsByUserId_ResourceDontBelongTo () {
+
+        Long userId = 1L;
+        Long userIdFromToken = 2L;
+
+        when(securityHelper.GetCurrentUserId()).thenReturn(userIdFromToken);
+        when(securityHelper.isAdmin()).thenReturn(false);
+
+        assertThatThrownBy(() -> paymentService.getPaymentsByUserId(userId, Pageable.unpaged()))
+            .isInstanceOf(AccessDeniedException.class)
+            .hasMessage("You define access to this resource");
     }
 
     @Test

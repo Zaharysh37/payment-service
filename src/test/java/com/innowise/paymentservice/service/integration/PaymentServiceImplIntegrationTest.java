@@ -6,6 +6,7 @@ import com.innowise.paymentservice.api.dto.eventdto.PaymentEventDto;
 import com.innowise.paymentservice.core.dao.PaymentRepository;
 import com.innowise.paymentservice.core.entity.Payment;
 import com.innowise.paymentservice.core.entity.PaymentStatus;
+import com.innowise.paymentservice.core.service.impl.PaymentServiceImpl;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,11 +15,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 
 import java.math.BigDecimal;
@@ -26,12 +27,13 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
-class PaymentServiceIntegrationTest extends BaseIntegrationTest {
+class PaymentServiceImplIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private KafkaTemplate<String, Object> kafkaTemplate;
@@ -41,6 +43,12 @@ class PaymentServiceIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private ConsumerFactory<String, Object> consumerFactory;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
+
+    //@Autowired
+    //private PaymentServiceImpl paymentService;
 
     private Consumer<String, PaymentEventDto> testConsumer;
 
