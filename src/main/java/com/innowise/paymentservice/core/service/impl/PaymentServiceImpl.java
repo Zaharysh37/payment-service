@@ -11,6 +11,7 @@ import com.innowise.paymentservice.core.entity.PaymentStatus;
 import com.innowise.paymentservice.core.mapper.eventmapper.GetPaymentEventMapper;
 import com.innowise.paymentservice.core.mapper.paymentmapper.CreatePaymentMapper;
 import com.innowise.paymentservice.core.mapper.paymentmapper.GetPaymentMapper;
+import com.innowise.paymentservice.core.security.SecurityHelper;
 import com.innowise.paymentservice.core.service.PaymentService;
 import com.innowise.paymentservice.core.service.eventservice.PaymentProducer;
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.common.errors.ResourceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +41,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final GetPaymentEventMapper getPaymentEventMapper;
 
     private final PaymentProducer paymentProducer;
+
+    private final SecurityHelper securityHelper;
 
     @Override
     @Transactional
@@ -68,6 +72,7 @@ public class PaymentServiceImpl implements PaymentService {
     public GetPaymentDto getPaymentById(String id) {
         Payment payment = paymentRepository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Payment not found with id: " + id));
+        checkAccess(payment.getUserId());
         return getPaymentMapper.toDto(payment);
     }
 
@@ -81,6 +86,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional(readOnly = true)
     public Page<GetPaymentDto> getPaymentsByUserId(Long userId, Pageable pageable) {
+        checkAccess(userId);
         Page<Payment> payments = paymentRepository.findByUserId(userId, pageable);
         return payments.map(getPaymentMapper::toDto);
     }
@@ -113,5 +119,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     public void deletePayment(String id) {
         paymentRepository.deleteById(id);
+    }
+
+    private void checkAccess(Long userId) {
+        Long currentUserId = securityHelper.GetCurrentUserId();
+        if (!securityHelper.isAdmin() && !currentUserId.equals(userId)) {
+            throw new AccessDeniedException("You define access to this resource");
+        }
     }
 }
