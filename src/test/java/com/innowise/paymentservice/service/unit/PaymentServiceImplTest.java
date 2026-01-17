@@ -204,7 +204,7 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void test_getPaymentById_returnPaymentById_ResourceBelongTo () {
+    void test_getPaymentById_returnPaymentById_whenResourceBelongTo () {
 
         String paymentId = "694a6081723088150e7cf74c";
 
@@ -233,7 +233,7 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void test_getPaymentById_ResourceDontBelongTo () {
+    void test_getPaymentById_throwAccessDenied_whenResourceDontBelongTo () {
 
         String paymentId = "694a6081723088150e7cf74c";
 
@@ -315,7 +315,7 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void test_getPaymentsByUserId_returnPaymentsByUserId_ResourceBelongTo () {
+    void test_getPaymentsByUserId_returnPaymentsByUserId_whenResourceBelongTo () {
 
         Long userId = 1L;
 
@@ -352,7 +352,7 @@ class PaymentServiceImplTest {
     }
 
     @Test
-    void test_getPaymentsByUserId_ResourceDontBelongTo () {
+    void test_getPaymentsByUserId_throwAccessDenied_whenResourceDontBelongTo () {
 
         Long userId = 1L;
         Long userIdFromToken = 2L;

@@ -1,7 +1,9 @@
 package com.innowise.paymentservice.service.integration;
 
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -26,6 +28,9 @@ public class BaseIntegrationTest {
 
     @Container
     static final KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.5.0"));
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     @DynamicPropertySource
     static void setProperties(DynamicPropertyRegistry registry) {
