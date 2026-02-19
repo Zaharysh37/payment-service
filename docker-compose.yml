@@ -11,7 +11,7 @@ services:
       PAYMENT_PRODUCER_TOPIC: create-payment
       PAYMENT_CONSUMER_TOPIC: create-order
       GROUP_ID: payment-service-group
-      RANDOM_API_URL: ${RANDOM_URI}
+      RANDOM_API: ${RANDOM_URI}
     depends_on:
       - mongo-db
       - kafka

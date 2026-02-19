@@ -1,22 +1,18 @@
-FROM maven:3.9-eclipse-temurin-17-alpine AS builder
+FROM maven:3.9-eclipse-temurin-17 AS builder
 
 WORKDIR /app
 
 COPY pom.xml .
-RUN mvn dependency:go-offline
-
 COPY src ./src
+
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-alpine
 
-WORKDIR /app
+RUN apk add --no-cache curl
 
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring:spring
+WORKDIR /app
 
 COPY --from=builder /app/target/*.jar app.jar
 
-ENV JAVA_OPTS=""
-
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
