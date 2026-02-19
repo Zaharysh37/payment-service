@@ -13,8 +13,8 @@ public class RandomNumberClient {
 
     private final RestClient restClient = RestClient.create();
 
-    @Value("${random.api.url}")
-    private String externalApiUrl;
+    //@Value("${random.api.url}")
+    private String externalApiUrl = "https://www.random.org/integers/?num=1&min=1&max=100&col=1&base=10&format=plain&rnd=new";
 
     public Integer getRandomNumber() {
         try {
